@@ -1,5 +1,7 @@
 package com.luv2code.component.models;
 
+
+
 public class CollegeStudent implements Student {
     private String firstname;
     private String lastname;

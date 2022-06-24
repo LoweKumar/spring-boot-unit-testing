@@ -1,12 +1,16 @@
 package com.luv2code.junitdemo;
 
 import org.junit.jupiter.api.*;
+import org.junit.jupiter.api.condition.EnabledIfEnvironmentVariable;
+import org.junit.jupiter.api.condition.EnabledIfEnvironmentVariables;
+import org.junit.jupiter.api.condition.EnabledIfSystemProperty;
 
 import java.time.Duration;
 import java.util.List;
 
 import static org.junit.jupiter.api.Assertions.*;
 
+@TestMethodOrder(MethodOrderer.MethodName.class)
 //DisplayNameGeneration(DisplayNameGenerator.Simple.class)
 public class DemoUtilsTest {
 
@@ -101,6 +105,7 @@ public class DemoUtilsTest {
 
     @DisplayName("Throw Exception")
     @Test
+    @Order(1)
     void testThrowException(){
         assertThrows(Exception.class,()->{demoUtils.throwException(-1);},"Should throw exception");
         assertDoesNotThrow(()->{demoUtils.throwException(5);},"Should not throw exception");
@@ -112,5 +117,17 @@ public class DemoUtilsTest {
 
         assertTimeoutPreemptively(Duration.ofSeconds(3), () -> { demoUtils.checkTimeout(); },
                 "Method should execute in 3 seconds");
+    }
+    @Test
+    @EnabledIfEnvironmentVariable(named="LUV2CODE_ENV", matches="DEV")
+    void testOnlyForDevEnvironment() {
+        // execute method and perform asserts
+        assertTrue(demoUtils.isGreater(6,2),"This should return true");
+    }
+
+    @Test
+    @EnabledIfSystemProperty(named="LUV2CODE_SYS_PROP", matches="CI_CD_DEPLOY")
+    void testOnlyForSystemProperty() {
+        // execute method and perform asserts
     }
 }

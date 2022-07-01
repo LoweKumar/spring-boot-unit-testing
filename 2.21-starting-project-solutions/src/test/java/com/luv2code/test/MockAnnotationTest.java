@@ -62,6 +62,24 @@ public class MockAnnotationTest {
         verify(applicationDao,times(1)).addGradeResultsForSingleClass(studentGrades.getMathGradeResults());
     }
 
+    @DisplayName("Find Gpa")
+    @Test
+    public void assertEqualsTestFindGpa() {
+        when(applicationDao.findGradePointAverage(studentGrades.getMathGradeResults()))
+                .thenReturn(88.31);
+        assertEquals(88.31, applicationService.findGradePointAverage(studentOne
+                .getStudentGrades().getMathGradeResults()));
+    }
+
+    @DisplayName("Not Null")
+    @Test
+    public void testAssertNotNull() {
+        when(applicationDao.checkNull(studentGrades.getMathGradeResults()))
+                .thenReturn(true);
+        assertNotNull(applicationService.checkNull(studentOne.getStudentGrades()
+                .getMathGradeResults()), "Object should not be null");
+    }
+
 
 
 

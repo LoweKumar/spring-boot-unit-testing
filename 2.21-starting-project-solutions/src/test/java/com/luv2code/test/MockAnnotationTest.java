@@ -80,6 +80,41 @@ public class MockAnnotationTest {
                 .getMathGradeResults()), "Object should not be null");
     }
 
+    @DisplayName("Throw Runtime Exception")
+    @Test
+    public void throwRuntimeError(){
+        //retreive college student from application context
+        CollegeStudent nullStudent = (CollegeStudent) context.getBean("collegeStudent");
+        //setup the expectation to throw up the exception
+        doThrow(new RuntimeException()).when(applicationDao).checkNull(nullStudent);
+        //perform assertion
+        assertThrows(RuntimeException.class,()->{
+           applicationService.checkNull(nullStudent);
+        });
+
+        verify(applicationDao, times(1)).checkNull(nullStudent);
+    }
+
+    @DisplayName("Multiple Stubbing")
+    @Test
+    public void stubbingConsecutiveCalls() {
+        CollegeStudent nullStudent = (CollegeStudent) context.getBean("collegeStudent");
+
+        when(applicationDao.checkNull(nullStudent))
+                .thenThrow(new RuntimeException())
+                .thenReturn("Do not throw exception second time");
+
+        assertThrows(RuntimeException.class, () -> {
+            applicationService.checkNull(nullStudent);
+        });
+
+        assertEquals("Do not throw exception second time",
+                applicationService.checkNull(nullStudent));
+
+        verify(applicationDao, times(2)).checkNull(nullStudent);
+    }
+
+
 
 
 

@@ -21,6 +21,51 @@ import static org.mockito.Mockito.*;
 @SpringBootTest(classes= MvcTestingExampleApplication.class)
 public class MockAnnotationTest {
 
+    @Autowired
+    ApplicationContext context;
+
+    @Autowired
+    CollegeStudent studentOne;
+
+    @Autowired
+    StudentGrades studentGrades;
+
+    @Mock //or @MockBean
+    private ApplicationDao applicationDao;
+
+    @InjectMocks //if used @MockBean for dao class then here we can use @Autowired in place of @InjectMocks
+    private ApplicationService applicationService;
+
+    @BeforeEach
+    public void beforeEach(){
+        studentOne.setFirstname("Abc");
+        studentOne.setLastname("Kumar");
+        studentOne.setEmailAddress("abc@gmail.com");
+        studentOne.setStudentGrades(studentGrades);
+    }
+
+    @DisplayName("When and Verify")
+    @Test
+    public void assertEqualsTestAddGrades(){
+        //setting result in database for math result as 100.00
+        when(applicationDao
+                .addGradeResultsForSingleClass(studentGrades
+                        .getMathGradeResults()))
+                .thenReturn(100.00);
+
+        //checking math result from service class
+        assertEquals(100,applicationService
+                .addGradeResultsForSingleClass(studentOne
+                        .getStudentGrades().getMathGradeResults()));
+
+        //Verify that DAO method was called
+        verify(applicationDao,times(1)).addGradeResultsForSingleClass(studentGrades.getMathGradeResults());
+    }
+
+
+
+
+
 
 
 }
